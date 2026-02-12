@@ -1,7 +1,7 @@
 import { Badge } from '@/shared/components/ui/badge.tsx'
 import { Card } from '@/shared/components/ui/card.tsx'
 import type { ICarDto } from '@/shared/interface/car'
-import { cn } from '@/shared/lib/utils.ts'
+import { cn, formatPrice } from '@/shared/lib/utils.ts'
 import { CAR_COLOR_MAP, CAR_COLOR_NAME_MAP } from '@/shared/constant/car-colors'
 import { MapPin, Pencil, Trash2 } from 'lucide-react'
 import type { CSSProperties } from 'react'
@@ -12,14 +12,6 @@ interface CarCardProps {
   style?: CSSProperties
   onEdit?: (car: ICarDto) => void
   onDelete?: (car: ICarDto) => void
-}
-
-const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB',
-    maximumFractionDigits: 0,
-  }).format(price)
 }
 
 export const CarCard = ({ car, className, style, onEdit, onDelete }: CarCardProps) => {

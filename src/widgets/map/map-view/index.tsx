@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import type { ICarDto } from '@/shared/interface/car'
 import { CarPopup } from '../car-popup'
@@ -23,12 +23,9 @@ const MapBounds = ({ cars }: MapBoundsProps) => {
   const hasInitialized = useRef(false)
 
   useEffect(() => {
-    // Only fit bounds on initial mount
     if (hasInitialized.current || cars.length === 0) return
 
-    const bounds = L.latLngBounds(
-      cars.map((car) => [car.latitude, car.longitude] as L.LatLngExpression)
-    )
+    const bounds = L.latLngBounds(cars.map((car) => [car.latitude, car.longitude] as L.LatLngExpression))
     map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 })
     hasInitialized.current = true
   }, [cars, map])
@@ -36,7 +33,6 @@ const MapBounds = ({ cars }: MapBoundsProps) => {
   return null
 }
 
-// Custom marker icon for selected/unselected states
 const createMarkerIcon = (isSelected: boolean): L.DivIcon => {
   const color = isSelected ? '#2563eb' : '#ef4444'
   const size = isSelected ? 36 : 30
@@ -66,12 +62,12 @@ export const MapView = ({ cars, selectedCarId, onMarkerClick, className }: MapVi
   const defaultCenter: L.LatLngExpression = [55.7558, 37.6173] // Moscow
 
   return (
-    <div className={cn('relative min-h-[400px] w-full rounded-xl overflow-hidden shadow-sm border border-border', className)}>
-      <MapContainer
-        center={defaultCenter}
-        zoom={10}
-        className="h-full w-full min-h-[400px]"
-        zoomControl={true}>
+    <div
+      className={cn(
+        'relative min-h-[400px] w-full rounded-xl overflow-hidden shadow-sm border border-border',
+        className,
+      )}>
+      <MapContainer center={defaultCenter} zoom={10} className="h-full w-full min-h-[400px]" zoomControl={true}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -87,11 +83,7 @@ export const MapView = ({ cars, selectedCarId, onMarkerClick, className }: MapVi
             eventHandlers={{
               click: () => onMarkerClick?.(car),
             }}>
-            <Popup
-              className="custom-popup"
-              closeButton={false}
-              minWidth={200}
-              maxWidth={300}>
+            <Popup className="custom-popup" closeButton={false} minWidth={200} maxWidth={300}>
               <CarPopup car={car} />
             </Popup>
           </Marker>

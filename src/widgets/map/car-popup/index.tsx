@@ -2,16 +2,8 @@ import { Badge } from '@/shared/components/ui/badge.tsx'
 import { Card } from '@/shared/components/ui/card.tsx'
 import type { ICarDto } from '@/shared/interface/car'
 import { CAR_COLOR_MAP, CAR_COLOR_NAME_MAP } from '@/shared/constant/car-colors'
-import { cn } from '@/shared/lib/utils.ts'
+import { cn, formatPrice } from '@/shared/lib/utils.ts'
 import { CircleDollarSign, Calendar, Palette } from 'lucide-react'
-
-const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB',
-    maximumFractionDigits: 0,
-  }).format(price)
-}
 
 interface CarPopupProps {
   car: ICarDto
