@@ -1,6 +1,12 @@
+import { QueryClientProvider } from '@tanstack/react-query'
+import CarCatalogPage from '@/pages/car-catalog'
+import { client } from '@/app/providers/react-query'
+
 const App = () => {
   return (
-    <div>hello</div>
+    <QueryClientProvider client={client}>
+      <CarCatalogPage />
+    </QueryClientProvider>
   )
 }
 
