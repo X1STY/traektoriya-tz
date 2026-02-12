@@ -19,7 +19,7 @@ const DEFAULT_VALUES: UpdateCarFormValues = {
 }
 
 const useUpdateCarPresenter = () => {
-  const { updateCar } = useCarStore()
+  const updateCar = useCarStore((s) => s.updateCar)
 
   const form = useForm<UpdateCarFormValues>({
     resolver: zodResolver(UPDATE_CAR_SCHEMA),

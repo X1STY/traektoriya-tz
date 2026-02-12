@@ -1,27 +1,22 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Package } from 'lucide-react'
 import { useGetCarsPresenter } from '@/entities/case/car/get-list/presenter'
-import { useCarStore } from '@/entities/store/car'
+import { applySort, useCarStore } from '@/entities/store/car'
 import { AddCarModal, CarGrid, DeleteCarModal, SortControl, UpdateCarModal } from '@/widgets/car-catalog'
 import type { ICarDto } from '@/shared/interface/car'
 
 const CarCatalogPage = () => {
   const { isLoading } = useGetCarsPresenter()
-  const { filteredCars, sortBy, sortOrder, setSortBy, toggleSortOrder } = useCarStore()
+  const cars = useCarStore((s) => s.cars)
+  const { sortBy, sortOrder, toggleSortOrder, setSortBy } = useCarStore()
+
+  const filteredCars = useMemo(() => applySort(cars, sortBy, sortOrder), [cars, sortBy, sortOrder])
   const [editingCar, setEditingCar] = useState<ICarDto | null>(null)
   const [deletingCar, setDeletingCar] = useState<ICarDto | null>(null)
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
-  const handleEdit = (car: ICarDto) => {
-    setEditingCar(car)
-    setIsUpdateModalOpen(true)
-  }
+  const handleEdit = (car: ICarDto) => setEditingCar(car)
 
-  const handleDelete = (car: ICarDto) => {
-    setDeletingCar(car)
-    setIsDeleteModalOpen(true)
-  }
+  const handleDelete = (car: ICarDto) => setDeletingCar(car)
 
   return (
     <div className="min-h-screen bg-background">
@@ -59,8 +54,8 @@ const CarCatalogPage = () => {
           className="mb-6"
         />
         <CarGrid cars={filteredCars} isLoading={isLoading} onEdit={handleEdit} onDelete={handleDelete} />
-        <UpdateCarModal open={isUpdateModalOpen} onOpenChange={setIsUpdateModalOpen} car={editingCar} />
-        <DeleteCarModal open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen} car={deletingCar} />
+        <UpdateCarModal open={!!editingCar} onOpenChange={(open) => !open && setEditingCar(null)} car={editingCar} />
+        <DeleteCarModal open={!!deletingCar} onOpenChange={(open) => !open && setDeletingCar(null)} car={deletingCar} />
       </main>
     </div>
   )

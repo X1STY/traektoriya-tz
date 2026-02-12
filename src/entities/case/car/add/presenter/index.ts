@@ -16,7 +16,7 @@ const ADD_CAR_SCHEMA = z.object({
 })
 
 const useAddCarPresenter = () => {
-  const { addCar } = useCarStore()
+  const addCar = useCarStore((s) => s.addCar)
   const form = useForm({
     resolver: zodResolver(ADD_CAR_SCHEMA),
     defaultValues: {

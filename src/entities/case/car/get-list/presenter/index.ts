@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 
 export const useGetCarsPresenter = () => {
   const { data, isLoading } = useGetCarsRequest()
-  const setCars = useCarStore((state) => state.setCars)
+  const setCars = useCarStore((s) => s.setCars)
 
   useEffect(() => {
     setCars(data)

@@ -7,7 +7,6 @@ interface ICarStore {
   error: string | null
   sortBy: SortBy
   sortOrder: SortOrder
-  filteredCars: ICarDto[]
 
   setCars: (cars: ICarDto[]) => void
   setLoading: (loading: boolean) => void
@@ -27,9 +26,8 @@ export const useCarStore = create<ICarStore>((set) => ({
   error: null,
   sortBy: null,
   sortOrder: 'asc',
-  filteredCars: [],
 
-  setCars: (cars) => set({ cars, filteredCars: cars }),
+  setCars: (cars) => set({ cars }),
 
   setLoading: (loading) => set({ isLoading: loading }),
 
@@ -41,48 +39,28 @@ export const useCarStore = create<ICarStore>((set) => ({
         ...car,
         id: Date.now(),
       }
-      const newCars = [...state.cars, newCar]
-      return {
-        cars: newCars,
-        filteredCars: applySort(newCars, state.sortBy, state.sortOrder),
-      }
+      return { cars: [...state.cars, newCar] }
     }),
 
   updateCar: (id, updates) =>
-    set((state) => {
-      const newCars = state.cars.map((car) => (car.id === id ? { ...car, ...updates } : car))
-      return {
-        cars: newCars,
-        filteredCars: applySort(newCars, state.sortBy, state.sortOrder),
-      }
-    }),
-
-  deleteCar: (id) =>
-    set((state) => {
-      const newCars = state.cars.filter((car) => car.id !== id)
-      return {
-        cars: newCars,
-        filteredCars: applySort(newCars, state.sortBy, state.sortOrder),
-      }
-    }),
-
-  setSortBy: (sortBy) =>
     set((state) => ({
-      sortBy,
-      filteredCars: applySort(state.cars, sortBy, state.sortOrder),
+      cars: state.cars.map((car) => (car.id === id ? { ...car, ...updates } : car)),
     })),
 
+  deleteCar: (id) =>
+    set((state) => ({
+      cars: state.cars.filter((car) => car.id !== id),
+    })),
+
+  setSortBy: (sortBy) => set({ sortBy }),
+
   toggleSortOrder: () =>
-    set((state) => {
-      const newOrder = state.sortOrder === 'asc' ? 'desc' : 'asc'
-      return {
-        sortOrder: newOrder,
-        filteredCars: applySort(state.cars, state.sortBy, newOrder),
-      }
-    }),
+    set((state) => ({
+      sortOrder: state.sortOrder === 'asc' ? 'desc' : 'asc',
+    })),
 }))
 
-function applySort(cars: ICarDto[], sortBy: SortBy, sortOrder: SortOrder): ICarDto[] {
+export function applySort(cars: ICarDto[], sortBy: SortBy, sortOrder: SortOrder): ICarDto[] {
   if (!sortBy) return cars
 
   return [...cars].sort((a, b) => {
@@ -96,3 +74,5 @@ function applySort(cars: ICarDto[], sortBy: SortBy, sortOrder: SortOrder): ICarD
     }
   })
 }
+
+export const selectFilteredCars = (state: ICarStore) => applySort(state.cars, state.sortBy, state.sortOrder)
