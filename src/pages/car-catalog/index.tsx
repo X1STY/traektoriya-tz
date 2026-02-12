@@ -3,6 +3,7 @@ import { Package } from 'lucide-react'
 import { useGetCarsPresenter } from '@/entities/case/car/get-list/presenter'
 import { applySort, useCarStore } from '@/entities/store/car'
 import { AddCarModal, CarGrid, DeleteCarModal, SortControl, UpdateCarModal } from '@/widgets/car-catalog'
+import { MapView } from '@/widgets/map'
 import type { ICarDto } from '@/shared/interface/car'
 
 const CarCatalogPage = () => {
@@ -13,10 +14,11 @@ const CarCatalogPage = () => {
   const filteredCars = useMemo(() => applySort(cars, sortBy, sortOrder), [cars, sortBy, sortOrder])
   const [editingCar, setEditingCar] = useState<ICarDto | null>(null)
   const [deletingCar, setDeletingCar] = useState<ICarDto | null>(null)
+  const [selectedCarId, setSelectedCarId] = useState<number | null>(null)
 
   const handleEdit = (car: ICarDto) => setEditingCar(car)
-
   const handleDelete = (car: ICarDto) => setDeletingCar(car)
+  const handleMarkerClick = (car: ICarDto) => setSelectedCarId(car.id)
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,7 +55,16 @@ const CarCatalogPage = () => {
           totalResults={filteredCars.length}
           className="mb-6"
         />
-        <CarGrid cars={filteredCars} isLoading={isLoading} onEdit={handleEdit} onDelete={handleDelete} />
+
+        <div className="grid gap-6 lg:grid-cols-[400px_1fr] lg:gap-8">
+          <div className="lg:sticky lg:top-24 lg:self-start order-1 lg:order-1">
+            <MapView cars={filteredCars} selectedCarId={selectedCarId} onMarkerClick={handleMarkerClick} />
+          </div>
+          <div className="order-2 lg:order-2">
+            <CarGrid cars={filteredCars} isLoading={isLoading} onEdit={handleEdit} onDelete={handleDelete} />
+          </div>
+        </div>
+
         <UpdateCarModal open={!!editingCar} onOpenChange={(open) => !open && setEditingCar(null)} car={editingCar} />
         <DeleteCarModal open={!!deletingCar} onOpenChange={(open) => !open && setDeletingCar(null)} car={deletingCar} />
       </main>
